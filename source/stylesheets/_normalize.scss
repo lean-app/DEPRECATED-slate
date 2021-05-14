@@ -426,3 +426,8 @@ td,
 th {
     padding: 0;
 }
+
+em::before {
+  content: '\A';
+  white-space: pre;
+}
