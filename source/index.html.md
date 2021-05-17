@@ -13,33 +13,30 @@ code_clipboard: true
 
 # Introduction
 
-Welcome to the Beta release of the Lean API. This API allows Lean’s partners to create and manage beneficiaries of Lean services and initiate payments to Lean accounts.
+Welcome to the Lean API. Our REST API allows Lean’s partners to easily integrate Lean financial services into their payment flow to workers.
 
-Note the APIs are not yet available for general release, and are subject to change.
+Partners can manage their organization settings and view platform usage from the [Admin Dashboard](http://admin.withlean.com).
 
-# Schema
+## Schema
 
 Requests must be sent via HTTPS using JSON. Responses will always be returned in JSON format. Dates and times are expected and returned as [ISO 8601](http://www.w3.org/TR/NOTE-datetime) formatted strings. 
 
 All requests to the API must have URLs relative to the base API URL:
 
-Sandbox:
+Sandbox: `https://app.staging.withlean.com/api`
 
-`https://app.staging.withlean.com/api`
+Production: `https://app.withlean.com/api`
 
-Production: will be added shortly
-
-# Authentication
+## Authentication
 
 > To authorize, use this code:
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here" \
+curl "https://app.withlean.com/api" \
   -u <API-KEY>:
 ```
 
-> Make sure to replace `<API-KEY>` with your API key and add the colon to prevent curl from asking for a password
+> Replace `<API-KEY>` with your API key and add the colon to prevent curl from asking for a password
 
 Before using the Lean API, you will receive an API Key from Lean. Authentication to the API is performed via HTTP Basic Auth. Provide your API key as the basic auth username value. You do not need to provide a password.
 
@@ -47,7 +44,7 @@ For security in the production environment, Lean restricts the IP Addresses from
 
 It is your responsibility to safely store your API keys. Lean will not have access to your production API keys once handed over.
 
-# Response
+## Response
 
 The Lean API uses HTTP response status codes to indicate the success or failure of your API request. You can expect the following status codes:
 
@@ -84,7 +81,7 @@ Status Code | Description
 }
 ```
 
-The Customer API allows you to create a new Lean user with complete profile details. This customer will not yet have a bank account or active Lean account until the customer submits their own application through the mobile app. In the staging environment, you can simulate application submittion using the `POST /application` endpoint.
+The Customer API allows you to register workers from your platform who will receive payouts. The customer will not yet have a bank account or active Lean account until the customer finishes the onboarding application through the Lean mobile app. Only active customers can receive payments. In the staging environment, you can simulate application submittion using the `POST /application` endpoint.
 
 | Property | Description |
 | --------- | ----------- |
@@ -179,7 +176,7 @@ curl POST "https://app.staging.withlean.com/api/customer" \
 
 ```shell
 curl GET "https://staging.app.withlean.com/api/customer/:partnerUserId" \ 
--u lean-fs52jt:
+-u <API-KEY>:
 ```
 
 > The response containing the customer:
@@ -272,8 +269,7 @@ A gig is a unit of work that you are compensating for. Using this endpoint commu
 | totalAmount *string* | Total amount paid out to the user. This should be inclusive of all wages, tips, expenses and reimbursements. Must be a positive value with two decimal precision. |
 | tips *string* | Total amount paid out to the user. This should be inclusive of all wages, tips, expenses and reimbursements. Must be a positive value with two decimal precision. |
 | expenses *string* | Expenses to be reimbursed to the user. Must be equal or greater than 0. Currency type with two decimal precision. |
-| description *string* | Description of the gig, which will be displayed to the user in the mobile app.
-Example: “SFO Airport to 410 Market Street”. |
+| description *string* | Description of the gig, which will be displayed to the user in the mobile app. Example: “SFO Airport to 410 Market Street”. |
 | gigId *string* | Your own unique identifier of this gig. |
 | startTime *string* | Start time of the gig, ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ). |
 | endTime *string* | End time of the gig, ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ). |
@@ -333,20 +329,38 @@ curl POST "https://app.withlean.com/api/gig" \
 | totalAmount *string* | | Total amount paid out to the user. This should be inclusive of all wages, tips, expenses and reimbursements. Must be a positive value with two decimal precision. |
 | tips *string* | Y | Amount of tips paid out to the user. Must be equal or greater than 0. Currency type with two decimal precision. |
 | expenses *string* | Y | Expenses to be reimbursed to the user. Must be equal or greater than 0. Currency type with two decimal precision. |
-| description *string* | Y | Description of the gig, which will be displayed to the user in the mobile app.
-Example: “SFO Airport to 410 Market Street”. |
-| gigId *string* | Y | Your own unique identifier of this gig.
-Must be unique, otherwise an error will be returned. |
+| description *string* | Y | Description of the gig, which will be displayed to the user in the mobile app. Example: “SFO Airport to 410 Market Street”. |
+| gigId *string* | Y | Your own unique identifier of this gig. Must be unique, otherwise an error will be returned. |
 | startTime *string* | Y | Start time of the gig, ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ). Use UTC standard. |
 | endTime *string* | Y | End time of the gig, ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ). Use UTC standard. |
 
-## Retrieve gigs
+## Get a gig
 
 ### Request
 
-`GET https://app.withlean.com/api/gig` - retrieves a list of all gigs
+> Sending the request:
 
-`GET https://app.withlean.com/api/gig/:gigId` - retrieves a gig
+```shell
+curl GET "https://staging.app.withlean.com/api/gig/:gigId" \ 
+-u <API-KEY>:
+```
+
+Returns a JSON object containing a gig object related to the given `gigID`.
+
+`GET https://app.withlean.com/api/gig/:gigId`
+
+## List gigs
+
+> Sending the request:
+
+```shell
+curl GET "https://staging.app.withlean.com/api/gig" \ 
+-u <API-KEY>:
+```
+
+Returns a JSON array containing a list of specialpayment objects.
+
+`GET https://app.withlean.com/api/gig`
 
 # Special Payment
 
@@ -358,8 +372,7 @@ A special payment is an ad hoc payment that is made to or from the customer that
 | partnerUserId *string* | Unique identifier of this user |
 | amount *string* | Total amount paid to or collected from the user. |
 | type *string* | One of: `bonus`, `reimbursement`, `cancellation`, `wait time`, `correction`, `flagged`, or `other`. |
-| description *string* | Description of the gig, which will be displayed to the user in the mobile app.
-Example: “Parking receipt from 3/1/2021”. |
+| description *string* | Description of the gig, which will be displayed to the user in the mobile app. Example: “Parking receipt from 3/1/2021”. |
 | gigId *string* | Unique identifier of the linked gig. |
 | status *string* | Current status of the special payment: `pending`, `success`, `failed`. The initial status is `pending` until the payment has been deposited into the customer's account, which then changes to `success`. Under rare circumstances, if the payment could not be completed and there is no remedy, the status will be `failed`. |
 | userdata *object* | JSON object for storing additional information. |
@@ -370,6 +383,7 @@ Example: “Parking receipt from 3/1/2021”. |
 ## Idempotency Header
 
 The Special Payment API supports idempotency to prevent unintended duplicate payments. Unlike the Gig API, which requires a unique identifier, the Special Payment API does not require a unique identifier in the POST request. Passing the Idempotency Key is optional, but recommended. The key is checked for uniqueness within the prior 24 hours.
+
 To make an idempotent request, provide an additional `Idempotency-Key: <key>` header to the request. Subsequent requests made within 24 hours with the same key return the same result as the original request.
 
 ## Create a special payment
@@ -420,17 +434,38 @@ curl POST "https://app.withlean.com/api/specialpayment" \
 | amount *string* | Y | Total amount to pay or collect from the user. Use a value with two decimal precision. A positive value will pay out to the user. A negative value will deduct funds from the user in cases such as a correction or reversal is needed. A negative amount presents as a credit to the invoice. |
 | type *string* | Y | One of: `bonus`, `reimbursement`, `cancellation`, `wait time`, `correction`, `flagged`, `other` |
 | gigId *string* | Y | Optional; Unique identifier of the linked gig. This field is validated that the gig was previously created. |
-| description *string* |  | Description of the gig, which will be displayed to the user in the mobile app.
-Example: “Parking receipt from 3/1/2021”. |
+| description *string* |  | Description of the gig, which will be displayed to the user in the mobile app. Example: “Parking receipt from 3/1/2021”. |
 | userdata *object* |  | Optional; JSON object for storing additional information. |
 
-## Retrieve special payments
+## Get a special payment
 
 ### Request
 
-`GET https://app.withlean.com/api/specialpayment` - retrieves a list of all special payments
+> Sending the request:
 
-`GET https://app.withlean.com/api/specialpayment/:id` - retrieves a special payment
+```shell
+curl GET "https://staging.app.withlean.com/api/specialpayment/:id" \ 
+-u <API-KEY>:
+```
+
+Returns a JSON object containing a specialpayment object related to the given `id`.
+
+`GET https://app.withlean.com/api/specialpayment/:id`
+
+## List special payments
+
+> Sending the request:
+
+```shell
+curl GET "https://staging.app.withlean.com/api/specialpayment" \ 
+-u <API-KEY>:
+```
+
+Returns a JSON array containing a list of specialpayment objects.
+
+### Request
+
+`GET https://app.withlean.com/api/specialpayment`
 
 # Webhooks
 
