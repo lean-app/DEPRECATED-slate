@@ -516,4 +516,4 @@ app.listen(port, (err) => {
 })
 ```
 
-When Lean sends a webhook, the payload is authenticated with a HMAC. The key used to create the HMAC is your api key, and you verify it by running the HMAC-SHA1 algorithm yourself with payload and the key to re-create the HMAC. Lean's computed HMAC is attached in the `x-lean-signature` request header.
+When Lean sends a webhook, the payload is authenticated with a HMAC. The key used to create the HMAC is your api key, and you verify it by running the HMAC-SHA1 algorithm yourself with payload and the key to re-create the HMAC. Lean's computed HMAC is attached in the `x-lean-signature` request header..
