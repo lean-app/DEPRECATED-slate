@@ -107,7 +107,7 @@ The Customer API allows you to register workers from your platform who will rece
 > Sending the request:
 
 ```shell
-curl POST "https://app.staging.withlean.com/api/customer" \
+curl POST "https://app.withlean.com/api/customer" \
   -H 'Content-Type: application/json'
   -u <API-KEY>:
   -d '{
@@ -162,20 +162,80 @@ curl POST "https://app.staging.withlean.com/api/customer" \
 | birthday *string* | Y | |
 | phoneNumber *string* | Y | Must be unique, otherwise an error will be returned. |
 | email *string* | Y | Must be unique, otherwise an error will be returned. |
-| street *string* | Y | |
-| street2 *string* | | |
+| street *string* | Y | Street address (maximum 35 characters) |
+| street2 *string* | | Second line of street address, if given (maximum 35 characters) |
 | city *string* | Y | |
 | state *string* | Y | |
 | postalCode *string* | Y | |
 | partnerUserId *string* | Y | Must be unique, otherwise an error will be returned. |
 | registrationDate *string* | Y | |
 
+## Update a customer
+
+Updates the customer profile detail. Only customer objects with status `PENDING` can be updated.
+
+> Sending the request:
+
+```shell
+curl PATCH "https://app.withlean.com/api/customer/:partnerUserId" \
+  -H 'Content-Type: application/json'
+  -u <API-KEY>:
+  -d '{
+  "phoneNumber": "4085008000",
+  }'
+```
+
+> The response containing the customer:
+
+```json
+{
+  "firstName": "Jane",
+  "middleName": null,
+  "lastName": "Doe",
+  "birthday": "1980-12-31",
+  "phoneNumber": "4085008000",
+  "email": "janedoe@gmail.com",
+  "street": "700 Treehouse Drive",
+  "street2": null,
+  "city": "San Jose",
+  "state": "CA",
+  "postalCode": "95101",
+  "partnerUserId": "uid_847834395730535",
+  "registrationDate": "2020-01-01",
+  "status": "PENDING",
+  "createdAt": "2021-04-01T19:53:36.869Z",
+  "updatedAt": "2021-04-01T19:53:36.869Z"
+}
+```
+
+### Request
+
+`PATCH https://app.withlean.com/api/customer/:partnerUserId`
+
+### Parameters
+
+| Name | Required | Description |
+|-------|--------|-------|
+| firstName *string* | | |
+| middleName *string* | | |
+| lastName *string* | | |
+| birthday *string* | | |
+| phoneNumber *string* | | Must be unique, otherwise an error will be returned. |
+| email *string* | | Must be unique, otherwise an error will be returned. |
+| street *string* | | Street address (maximum 35 characters) |
+| street2 *string* | | Second line of street address, if given (maximum 35 characters) |
+| city *string* | | |
+| state *string* | | |
+| postalCode *string* | | |
+| registrationDate *string* | | |
+
+
 ## Retrieve a customer
 
 > Sending the request:
 
 ```shell
-curl GET "https://staging.app.withlean.com/api/customer/:partnerUserId" \ 
+curl GET "https://app.withlean.com/api/customer/:partnerUserId" \ 
 -u <API-KEY>:
 ```
 
@@ -231,7 +291,7 @@ This API exists only in sandbox for testing purposes. In the live environment, e
 > Sending the request:
 
 ```shell
-curl POST "https://app.withlean.com/api/application" \
+curl POST "https://app.staging.withlean.com/api/application" \
   -u <API-KEY>:
   -H 'Content-Type: application/json'
   -d '{
@@ -341,7 +401,7 @@ curl POST "https://app.withlean.com/api/gig" \
 > Sending the request:
 
 ```shell
-curl GET "https://staging.app.withlean.com/api/gig/:gigId" \ 
+curl GET "https://app.withlean.com/api/gig/:gigId" \ 
 -u <API-KEY>:
 ```
 
@@ -354,7 +414,7 @@ Returns a JSON object containing a gig object related to the given `gigID`.
 > Sending the request:
 
 ```shell
-curl GET "https://staging.app.withlean.com/api/gig" \ 
+curl GET "https://app.withlean.com/api/gig" \ 
 -u <API-KEY>:
 ```
 
@@ -444,7 +504,7 @@ curl POST "https://app.withlean.com/api/specialpayment" \
 > Sending the request:
 
 ```shell
-curl GET "https://staging.app.withlean.com/api/specialpayment/:id" \ 
+curl GET "https://app.withlean.com/api/specialpayment/:id" \ 
 -u <API-KEY>:
 ```
 
@@ -457,7 +517,7 @@ Returns a JSON object containing a specialpayment object related to the given `i
 > Sending the request:
 
 ```shell
-curl GET "https://staging.app.withlean.com/api/specialpayment" \ 
+curl GET "https://app.withlean.com/api/specialpayment" \ 
 -u <API-KEY>:
 ```
 
