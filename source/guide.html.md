@@ -46,7 +46,7 @@ Workers are asked to install the Lean app, available for Android and iOS, to get
 > One call to Lean customer API:
 
 ```shell
-curl POST "https://app.staging.withlean.com/api/customer" \
+curl POST "https://app.withlean.com/api/customer" \
   -H 'Content-Type: application/json'
   -u <API-KEY>:
   -d '{
@@ -107,6 +107,6 @@ curl POST "https://app.withlean.com/api/specialpayment" \
   }'
 ```
 
-*Gig*: These are a unit of work where you can specify the amount to be paid, time period, breakdown and additional meta data.
+*Gig*: These are a unit of work where you can specify the amount to be paid, time period, breakdown and additional metadata.
 
 *Special Payment*: These are ad hoc payments for any purpose, such as a bonus, wait time, cancellation and more. They can be linked or not linked to a gig. You can also pass a negative number in the event of making a correction to a prior payout.
